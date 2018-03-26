@@ -1,0 +1,80 @@
+﻿<Window x:Class="名簿作成システム_WPF_.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="名簿作成システム" VerticalAlignment="Center" HorizontalAlignment="Center" ResizeMode="NoResize" WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterOwner" Closing="WindowClosing" KeyDown="WKeyDown" MouseMove="WindowMouseMove">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="30" Name="PseudoTitleBar" Visibility="Collapsed">
+            <Rectangle  Fill="Black"/>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Content="名簿作成システム" FontSize="12"/>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Content="×" FontSize="16" Background="Red" BorderBrush="White" Foreground="White" Click="CloseButtonClicked"/>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="30" Content="＿" FontSize="16" Margin="0,0,30,0" Background="Blue" BorderBrush="White" Foreground="White" Click="MinimizeButtonClick"/>
+        </Grid>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Name="NameRow"/>
+                <RowDefinition Name="DeptRow"/>
+                <RowDefinition Name="AddrRow"/>
+            </Grid.RowDefinitions>
+            <Label Content="名前:" Name="namelabel" FontSize="36" Grid.Column="0" Grid.Row="0" Margin="0,0,18,0" Height="56" VerticalAlignment="Center" HorizontalAlignment="Right" Width="97"/>
+            <Label Content="学部:" Name="schoollabel" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="36" Grid.Column="0" Grid.Row="1" Margin="0,0,18,0" Height="55" Width="97"/>
+            <Label Content="メールアドレス:" Name="maillabel" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="36" Grid.Column="0" Grid.Row="2" Margin="0,39.5,18,39.5" Height="55" Width="217"/>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="name" HorizontalAlignment="Stretch" Height="52" TextWrapping="NoWrap" VerticalAlignment="Center" FontSize="36" Grid.Column="0" Grid.Row="0" Margin="18,0,18,0" GotFocus="StartInputingName"/>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ComboBox x:Name="dept" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="36" Grid.Column="0" Grid.Row="0" Height="51" Margin="18,0,18,0">
+                    <ComboBoxItem Content="文学部"/>
+                    <ComboBoxItem Content="教育学部"/>
+                    <ComboBoxItem Content="法学部"/>
+                    <ComboBoxItem Content="経済学部"/>
+                    <ComboBoxItem Content="情報文化学部"/>
+                    <ComboBoxItem Content="理学部"/>
+                    <ComboBoxItem Content="医学部(医学科)"/>
+                    <ComboBoxItem Content="医学部(保健学科)"/>
+                    <ComboBoxItem Content="工学部"/>
+                    <ComboBoxItem Content="農学部"/>
+                </ComboBox>
+            </Grid>
+            <TextBox x:Name="address" HorizontalAlignment="Stretch" Height="52" TextWrapping="NoWrap" VerticalAlignment="Center" FontSize="36" Grid.Column="1" Grid.Row="2" Margin="18,0,18,0" GotFocus="StartInputtingAddress"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" Name="TchKeyClm"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="registerbutton" Content="登録" HorizontalAlignment="Center" Height="78" VerticalAlignment="Center" Width="200" FontSize="36" Grid.Column="0" Grid.Row="0" Click="Register"/>
+            <Button x:Name="resetbutton" Content="リセット" HorizontalAlignment="Center" Height="78"  VerticalAlignment="Center" Width="200" FontSize="36" Grid.Column="1" Grid.Row="0" Click="Reset"/>
+            <Button x:Name="runtchky" Content="ﾀｯﾁｷｰﾎﾞｰﾄﾞ" HorizontalAlignment="Center" Height="78"  VerticalAlignment="Center" Width="200" FontSize="36" Grid.Column="2" Grid.Row="0" Click="RunTouchKeyboard"/>
+        </Grid>
+    </Grid>
+
+</Window>
