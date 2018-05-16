@@ -52,7 +52,7 @@
                     <ComboBoxItem Content="教育学部"/>
                     <ComboBoxItem Content="法学部"/>
                     <ComboBoxItem Content="経済学部"/>
-                    <ComboBoxItem Content="情報文化学部"/>
+                    <ComboBoxItem Content="情報学部"/>
                     <ComboBoxItem Content="理学部"/>
                     <ComboBoxItem Content="医学部(医学科)"/>
                     <ComboBoxItem Content="医学部(保健学科)"/>
