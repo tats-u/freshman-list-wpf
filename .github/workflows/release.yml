@@ -1,0 +1,73 @@
+name: CI (Release)
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+
+      - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Locate & Exec vcvarsall.bat
+        run: |
+          $VCVarsAll = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -find "VC\Auxiliary\Build\vcvarsall.bat"
+          if (-not $VCVarsAll) {
+            Write-Error "vcvarsall.bat not found" -Category NotInstalled
+            exit 1
+          }
+          $Token = "#####ENV#####"
+          $enc = [Console]::OutputEncoding
+          [Console]::OutputEncoding = [Text.Encoding]::Unicode
+          $VCVarsAllResult = cmd /U /C "`"$VCVarsAll`" x64 && echo $TOKEN&& set"
+          [Console]::OutputEncoding = $enc
+          $TokenIndex = $VCVarsAllResult.IndexOf($Token)
+          if ($TokenIndex -eq -1) {
+            Write-Error "vcvarsall failed."
+            exit 1
+          }
+          $VCVarsAllResult | Select-Object -Skip ($TokenIndex + 1) | ForEach-Object {
+            $k, $v = $_ -split "=", 2
+            if((Get-Item "Env:\$k" -ErrorAction Ignore).Value -ne $v) {
+              Write-Output "::set-env name=$k::$v"
+            }
+          }
+        shell: pwsh
+      - name: Release Build
+        run: |-
+          msbuild -restore -p:Configuration=Release -p:Platform="Any CPU" -m
+        shell: pwsh
+      - name: Create Archive
+        run: Compress-Archive * "名簿作成システム(WPF).zip"
+        working-directory: "./名簿作成システム(WPF)/bin/Release"
+        shell: pwsh
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          # body: |
+          #   Changes in this Release
+          #   - First Change
+          #   - Second Change
+          draft: false
+          prerelease: false
+      - name: Upload Release Binary
+        uses: actions/upload-release-asset@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_name: freshman-list-wpf-win.zip
+          asset_path: 名簿作成システム(WPF)\bin\Release\名簿作成システム(WPF).zip
+          asset_content_type: application/zip
