@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI (Main)
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Locate & Exec vcvarsall.bat
+        run: |
+          $VCVarsAll = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -find "VC\Auxiliary\Build\vcvarsall.bat"
+          if (-not $VCVarsAll) {
+            Write-Error "vcvarsall.bat not found" -Category NotInstalled
+            exit 1
+          }
+          $Token = "#####ENV#####"
+          $enc = [Console]::OutputEncoding
+          [Console]::OutputEncoding = [Text.Encoding]::Unicode
+          $VCVarsAllResult = cmd /U /C "`"$VCVarsAll`" x64 && echo $TOKEN&& set"
+          [Console]::OutputEncoding = $enc
+          $TokenIndex = $VCVarsAllResult.IndexOf($Token)
+          if ($TokenIndex -eq -1) {
+            Write-Error "vcvarsall failed."
+            exit 1
+          }
+          $VCVarsAllResult | Select-Object -Skip ($TokenIndex + 1) | ForEach-Object {
+            $k, $v = $_ -split "=", 2
+            if((Get-Item "Env:\$k" -ErrorAction Ignore).Value -ne $v) {
+              Write-Output "::set-env name=$k::$v"
+            }
+          }
+        shell: pwsh
+      - name: Debug Build
+        run: |
+          msbuild -restore -p:Configuration=Debug -p:Platform="Any CPU" -m
+      - name: Upload Artifact (Debug Binary)
+        uses: actions/upload-artifact@v1
+        with:
+          name: binary-for-debug
+          path: '名簿作成システム(WPF)\bin\Debug'
